@@ -20,6 +20,12 @@ export class UserEntity {
     nullable: false,
   })
   email: string;
+
+  @Column({
+    type: "boolean",
+    default: false,
+  })
+  verified: boolean;
   @BeforeInsert() async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
   }
