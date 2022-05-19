@@ -3,10 +3,11 @@ FROM node:latest
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package.json ./
 
-RUN npm install --force
-RUN npm i --save-dev @types/dockerode
+RUN npm install yarn --global
+RUN yarn install
+RUN yarn add @types/dockerode
 
 COPY . .
 
