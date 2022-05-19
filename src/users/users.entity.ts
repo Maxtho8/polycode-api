@@ -1,5 +1,5 @@
 import { Entity, Column, BeforeInsert, PrimaryGeneratedColumn } from "typeorm";
-import bcrypt from "bcryptjs";
+import * as bcrypt from "bcryptjs";
 
 @Entity("user")
 export class UserEntity {

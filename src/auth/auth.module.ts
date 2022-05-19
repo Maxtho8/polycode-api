@@ -7,6 +7,7 @@ import { JwtStrategy } from "./jwt.strategy";
 import { AuthController } from "./auth.controller";
 import { DatabaseModule } from "../database/database.module";
 import { UsersProviders } from "../users/users.provider";
+import { UsersService } from "../users/users.service";
 
 @Module({
   imports: [
@@ -18,14 +19,11 @@ import { UsersProviders } from "../users/users.provider";
       session: false,
     }),
     JwtModule.register({
-      secret: process.env.SECRETKEY,
-      signOptions: {
-        expiresIn: process.env.EXPIRESIN,
-      },
+      secret: `${process.env.TOKEN_SECRET}`,
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, UsersService, ...UsersProviders],
   exports: [PassportModule, JwtModule, AuthService],
 })
 export class AuthModule {}

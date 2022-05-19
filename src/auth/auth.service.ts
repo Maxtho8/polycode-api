@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import bcrypt from "bcrypt";
 import { UsersService } from "./../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { RegisterDto } from "./register.dto";
@@ -19,17 +18,10 @@ export interface JwtPayload {
 @Injectable()
 export class AuthService {
   constructor(private readonly usersService: UsersService, private readonly jwtService: JwtService) {}
-  comparePasswords(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
-  }
 
-  async register(userDto: RegisterDto): Promise<boolean> {
-    try {
-      await this.usersService.create(userDto);
-    } catch (err) {
-      return false;
-    }
-    return true;
+  async register(userDto: RegisterDto): Promise<UserDto> {
+    const user = await this.usersService.create(userDto);
+    return user;
   }
 
   async login(loginUserDto: LoginDto): Promise<LoginStatus> {
@@ -46,7 +38,7 @@ export class AuthService {
   }
 
   private _createToken(user: UserDto): any {
-    const accessToken = this.jwtService.sign(user);
+    const accessToken = this.jwtService.sign({ email: user.email, password: user.id }, { expiresIn: process.env.EXPIRESIN });
     return {
       expiresIn: process.env.EXPIRESIN,
       accessToken,

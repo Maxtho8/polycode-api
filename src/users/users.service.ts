@@ -7,21 +7,18 @@ import { LoginDto } from "./../auth/login.dto";
 import { RegisterDto } from "./../auth/register.dto";
 import { AuthService } from "./../auth/auth.service";
 import { UpdateDto } from "./../auth/update.dto";
-
-export interface User {
-  id: number;
-  name: string;
-  username: string;
-  password: string;
-}
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject("UsersRepository")
     private UsersRepository: Repository<UserEntity>,
-    private authService: AuthService,
   ) {}
+
+  async comparePasswords(password: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
+  }
 
   toUserDto = (data: UserEntity): UserDto => {
     const { id, username, email } = data;
@@ -40,15 +37,15 @@ export class UsersService {
     });
   }
 
-  async findByLogin({ username, password }: LoginDto): Promise<UserDto> {
-    const user = await this.UsersRepository.findOne({ where: { username } });
+  async findByLogin({ email, password }: LoginDto): Promise<UserDto> {
+    const user = await this.UsersRepository.findOne({ where: { email } });
 
     if (!user) {
       throw new HttpException("User not found", HttpStatus.UNAUTHORIZED);
     }
 
     // compare passwords
-    const areEqual = this.authService.comparePasswords(user.password, password);
+    const areEqual = await this.comparePasswords(password, user.password);
 
     if (!areEqual) {
       throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
@@ -73,7 +70,7 @@ export class UsersService {
       throw new HttpException("Email already exists", HttpStatus.BAD_REQUEST);
     }
     // create user
-    const newUser = await this.UsersRepository.create(user);
+    const newUser = this.UsersRepository.create(user);
     await this.UsersRepository.save(newUser);
     return this.toUserDto(newUser);
   }

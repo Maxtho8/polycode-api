@@ -8,9 +8,10 @@ import { JwtPayload } from "./auth.service";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
+    console.log(`${process.env.SECRETKEY}`);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.SECRETKEY,
+      secretOrKey: `${process.env.SECRETKEY}`,
     });
   }
 
