@@ -1,7 +1,9 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { ChallengeDto } from "./challenge.dto";
 import { ChallengeService } from "./challenge.service";
 
+@UseGuards(AuthGuard())
 @Controller("challenge")
 export class ChallengeController {
   constructor(private challengeService: ChallengeService) {}
@@ -13,7 +15,7 @@ export class ChallengeController {
   }
 
   //get challenge json by id
-  @Get("/:id")
+  @Get(":id")
   public async getChallenge(@Param("id") id): Promise<ChallengeDto> {
     return this.challengeService.getChallenge(id);
   }
