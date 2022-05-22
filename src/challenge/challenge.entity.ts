@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("user")
+@Entity("challenge")
 export class ChallengeEntity {
   @PrimaryGeneratedColumn("uuid") id: string;
   @Column({
@@ -13,11 +13,6 @@ export class ChallengeEntity {
     nullable: false,
   })
   img_path: string;
-  @Column({
-    type: "varchar",
-    nullable: false,
-  })
-  email: string;
 
   @Column({
     type: "varchar",
